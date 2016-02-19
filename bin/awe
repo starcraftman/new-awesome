@@ -1,0 +1,6 @@
+#!/bin/sh
+# Simple wrapper to control the web project
+PPATH="$(dirname $(readlink -f $(dirname $0))):$PYTHONPATH"
+PYTHONPATH=$PPATH python -m util.awe $@
+
+# vim:set et sw=2 ts=4:
