@@ -22,9 +22,9 @@ def test_touch_files():
             'dir1/dir2/file3.py',
             'dir3/file4.py',
         ]
-        test.common.touch_files(tempd, paths)
-        for path in paths:
-            assert os.path.exists(os.path.join(tempd, path))
+        abs_paths = test.common.touch_files(tempd, paths)
+        for path in abs_paths:
+            assert os.path.exists(path)
     finally:
         util.delete_it(tempd)
 
@@ -32,12 +32,10 @@ def test_touch_files():
 @mock.patch('util.ROOT', tempfile.mkdtemp())
 def test_save_confs():
     try:
-        os.mkdir(os.path.join(util.ROOT, 'conf'))
-        paths = [os.path.join(util.ROOT, 'conf', fname) for fname in
-                 ('db.conf', 'flask.conf', 'gconf.json')]
+        paths = test.common.touch_files(util.ROOT,
+                                        ['conf/db.conf', 'conf/flask.conf',
+                                         'conf/gconf.json'])
         for path in paths:
-            with open(path, 'w') as fout:
-                fout.write('hello')
             assert os.path.exists(path)
 
         test.common.save_confs()
@@ -51,12 +49,10 @@ def test_save_confs():
 @mock.patch('util.ROOT', tempfile.mkdtemp())
 def test_restore_confs():
     try:
-        os.mkdir(os.path.join(util.ROOT, 'conf'))
-        paths = [os.path.join(util.ROOT, 'conf', fname) for fname in
-                 ('db.conf', 'flask.conf', 'gconf.json')]
+        paths = test.common.touch_files(util.ROOT,
+                                        ['conf/db.conf', 'conf/flask.conf',
+                                         'conf/gconf.json'])
         for path in paths:
-            with open(path, 'w') as fout:
-                fout.write('hello')
             assert os.path.exists(path)
 
         test.common.save_confs()

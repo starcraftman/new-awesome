@@ -13,21 +13,30 @@ import time
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
-def glob_rec(root, pattern):
+def glob_rec(root, pattern, ignore_dirs=None):
     """
     Recursively walk down from root searching for files or folders
     matching the regex pattern.
 
-    Made because glob.glob hasn't always supported **.
+    Args:
+        root: An absolute path to start in.
+        pattern: Any valid matcher for files.
+        ignore_dirs: Ignore all directories matching.
 
     Returns:
         A list of matched absolute paths.
     """
     matcher = re.compile(pattern)
     matched = []
-    for dpath, dnames, fnames in os.walk(root):
-        matched += [os.path.join(dpath, fname) for fname in
-                    fnames + dnames if re.match(matcher, fname)]
+    if ignore_dirs is None:
+        ignore_dirs = []
+
+    for dirname, subdirs, fnames in os.walk(root):
+        for idir in ignore_dirs:
+            if idir in subdirs:
+                subdirs.remove(idir)
+        matched += [os.path.join(dirname, fname) for fname in
+                    fnames + subdirs if re.match(matcher, fname)]
 
     return matched
 

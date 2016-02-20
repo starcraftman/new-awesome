@@ -28,10 +28,25 @@ def test_glob_recursively():
             'dir1/dir2/match.py',
             'web/static/main.css',
         ]
-        tc.touch_files(tempd, paths)
-        expect = [os.path.join(tempd, paths[0]),
-                  os.path.join(tempd, paths[2])]
+        abs_paths = tc.touch_files(tempd, paths)
+        expect = [abs_paths[0], abs_paths[2]]
         assert util.glob_rec(tempd, r'.*\.py') == expect
+    finally:
+        util.delete_it(tempd)
+
+
+def test_glob_recursively_ignore():
+    try:
+        tempd = tempfile.mkdtemp()
+        paths = [
+            '.vagrant/box/test.py',
+            '.git/file.py',
+            'dir1/dir2/match.py',
+            'web/static/main.css',
+        ]
+        abs_paths = tc.touch_files(tempd, paths)
+        assert util.glob_rec(tempd, r'.*\.py',
+                             ['.git', '.vagrant']) == [abs_paths[2]]
     finally:
         util.delete_it(tempd)
 

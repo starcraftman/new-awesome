@@ -25,15 +25,23 @@ def touch_files(root, paths):
 
     create any required intermediary directories then write a dummy
     file to basename.
+
+    Returns:
+        All created files as absolute paths.
     """
+    abs_paths = []
+
     for relpath in paths:
         path = os.path.join(root, relpath)
+        abs_paths.append(path)
         try:
             os.makedirs(os.path.dirname(path))
         except OSError:
             pass
         with open(path, 'w') as fout:
             fout.write('')
+
+    return abs_paths
 
 
 def save_confs():

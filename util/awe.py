@@ -20,7 +20,9 @@ def parse_clean(args):
     Parse: awe clean
     """
     print('Deleting files under root matching: .cache | __pycache__ | *.pyc')
-    for fname in util.glob_rec(util.ROOT, r'(__pycache__)|(\.cache)|(.*\.pyc)'):
+    fnames = util.glob_rec(util.ROOT, r'(__pycache__)|(\.cache)|(.*\.pyc)',
+                           ['.git', '.tox', '.vagrant', '.venv'])
+    for fname in fnames:
         util.delete_it(fname)
 
     if args.all:
