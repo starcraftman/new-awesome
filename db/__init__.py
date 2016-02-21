@@ -43,7 +43,7 @@ def start():
     if pid():
         return
 
-    if not os.path.exists(conf.get('db_root')):
+    if not os.path.exists(os.path.join(conf.get('db_root'), 'metadata')):
         util.command('rethinkdb create -d ' + conf.get('db_root'))
     util.command('rethinkdb serve --config-file ' + conf.DB_FILE)
 
@@ -60,10 +60,7 @@ def stop():
         return
 
     util.pid_kill(db_pid)
-    try:
-        os.remove(conf.get('db_pid'))
-    except OSError:
-        pass
+    os.remove(conf.get('db_pid'))
 
     while 'Storage engine shut down' not in log(1)[0]:
         time.sleep(1)
@@ -89,6 +86,9 @@ def log(lines=25):
     """
     Get the last lines of the log file.
     """
-    with open(conf.get('db_log')) as fin:
-        lines = fin.readlines()[-lines:]
+    try:
+        with open(conf.get('db_log')) as fin:
+            lines = fin.readlines()[-lines:]
+    except IOError:
+        lines = ['Log file not yet created.']
     return lines

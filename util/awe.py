@@ -80,7 +80,7 @@ def parse_db_log(args):
     """
     Parse: awe db log
     """
-    print('Last {0} lines of {1}'.format(args.lines, conf.DB_LOG))
+    print('Last {0} lines of {1}'.format(args.lines, conf.get('db_log')))
     print('-' * 60)
     print(''.join(db.log(int(args.lines))))
 

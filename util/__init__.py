@@ -61,8 +61,11 @@ def command(cmd, wait=True, **kwargs):
         'stdout': sub.PIPE,
     }
     pargs.update(kwargs)
-    proc = sub.Popen(shlex.split(cmd) if isinstance(cmd, type('')) else cmd,
-                     **pargs)
+
+    if not isinstance(cmd, list):
+        cmd = shlex.split(cmd)
+    proc = sub.Popen(cmd, **pargs)
+
     if wait:
         proc.wait()
         return (proc.returncode, proc.stdout.read())

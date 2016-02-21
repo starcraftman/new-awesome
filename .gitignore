@@ -3,8 +3,9 @@
 **/.cache
 .vagrant
 .venv
-conf/db.conf
+conf/*.conf
 conf/*.json
+db/rethink
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
