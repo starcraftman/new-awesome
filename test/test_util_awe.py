@@ -14,7 +14,7 @@ import test.common as tc
 
 
 @mock.patch('util.ROOT', tempfile.mkdtemp())
-def test_parse_clean_all():
+def test_parse_clean_all(mock_print):
     try:
         paths = [
             '.tox/flake8',
@@ -31,5 +31,6 @@ def test_parse_clean_all():
         assert os.listdir(os.path.join(util.ROOT, 'db')) == ['__init__.py']
         assert os.listdir(os.path.join(util.ROOT, 'test')) == []
         assert os.listdir(os.path.join(util.ROOT, 'web')) == []
+        assert mock_print.called
     finally:
         util.delete_it(util.ROOT)

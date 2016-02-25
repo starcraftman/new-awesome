@@ -1,3 +1,4 @@
+# pylint: disable=missing-docstring
 """
 Common functionality to be reused among tests.
 """
@@ -7,6 +8,8 @@ import os
 import subprocess as sub
 
 import conf
+import db
+import db.common as dbc
 import util
 
 
@@ -67,6 +70,7 @@ def env_setup():
     Setup the testing environment.
     '''
     print('\n-----INIT ENV')
+    db.stop()
     save_confs()
     conf.update_env('test')
     print('\n-----INIT ENV FINISHED')
@@ -80,3 +84,22 @@ def env_teardown():
     util.delete_it(conf.get('db_root'))
     restore_confs()
     print('\n-----DESTROY ENV FINISHED')
+
+
+class TestDB(object):
+    """
+    Base class for testing the database code.
+    """
+    @classmethod
+    def setup_class(cls):
+        db.stop()
+        db.start()
+
+    @classmethod
+    def teardown_class(cls):
+        db.stop()
+        dbc.init_db()
+
+    def setup(self):
+        dbc.init_db()
+        dbc.init_table('plugins')

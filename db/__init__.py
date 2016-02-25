@@ -7,6 +7,16 @@ import time
 
 import conf
 import util
+import db.common
+
+MAX_TIME = 5
+
+
+class DBTimeout(Exception):
+    """
+    Interacting with the db process timed out.
+    """
+    pass
 
 
 def pid():
@@ -47,8 +57,11 @@ def start():
         util.command('rethinkdb create -d ' + conf.get('db_root'))
     util.command('rethinkdb serve --config-file ' + conf.DB_FILE)
 
-    while 'Server ready' not in log(1)[0]:
+    start_time = time.time()
+    while 'Server ready' not in ''.join(log(3)):
         time.sleep(1)
+        if (time.time() - start_time) > MAX_TIME:
+            raise DBTimeout()
 
 
 def stop():
@@ -62,8 +75,11 @@ def stop():
     util.pid_kill(db_pid)
     os.remove(conf.get('db_pid'))
 
-    while 'Storage engine shut down' not in log(1)[0]:
+    start_time = time.time()
+    while 'engine shut down' not in ''.join(log(3)):
         time.sleep(1)
+        if (time.time() - start_time) > MAX_TIME:
+            raise DBTimeout()
 
 
 def restart():
@@ -76,10 +92,11 @@ def restart():
 
 def init():
     """
-    (Re)initialize the database, removes all existing data.
+    Initialize the database, removes all existing data.
     """
-    # TODO: Hook all subtables and initialize
-    pass
+    db.common.init_db()
+    for mod_name in ['plugins']:
+        __import__('db.' + mod_name).init()
 
 
 def log(lines=25):

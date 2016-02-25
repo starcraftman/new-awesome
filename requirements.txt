@@ -1,7 +1,6 @@
 # Main application
 flask
 flask-cache
-psutil
 pyyaml
 requests
 rethinkdb

@@ -85,6 +85,13 @@ def parse_db_log(args):
     print(''.join(db.log(int(args.lines))))
 
 
+def parse_db_init(_):
+    """
+    Parse awe db init
+    """
+    db.init()
+
+
 def parse_server(args):
     """
     Parse: awe server
@@ -136,6 +143,8 @@ def create_args_parser():
     sub.set_defaults(func=parse_db_status)
     sub = subs2.add_parser('stop', description='stop the db')
     sub.set_defaults(func=parse_db_stop)
+    sub = subs2.add_parser('init', description='initialize the db')
+    sub.set_defaults(func=parse_db_init)
 
     sub = subs.add_parser('server', description='Manage the server')
     subs2 = sub.add_subparsers()
