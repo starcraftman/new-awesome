@@ -10,8 +10,9 @@ import os
 import sys
 
 import conf
-import db
 import util
+import util.db_control as dbc
+# import util.awe_web as webc
 # import web
 
 
@@ -43,22 +44,22 @@ def parse_db_start(_):
     """
     Parse: awe db start
     """
-    if not db.pid():
+    if not dbc.pid():
         print('Starting the database')
-        db.start()
+        dbc.start()
     else:
-        db.status()
+        dbc.status()
 
 
 def parse_db_stop(_):
     """
     Parse: awe db stop
     """
-    if db.pid():
+    if dbc.pid():
         print('Please be patient, stopping the database')
-        db.stop()
+        dbc.stop()
     else:
-        db.status()
+        dbc.status()
 
 
 def parse_db_restart(_):
@@ -66,14 +67,14 @@ def parse_db_restart(_):
     Parse: awe db restart
     """
     print('Please be patient, restarting the database')
-    db.restart()
+    dbc.restart()
 
 
 def parse_db_status(_):
     """
     Parse: awe db status
     """
-    db.status()
+    dbc.status()
 
 
 def parse_db_log(args):
@@ -82,14 +83,14 @@ def parse_db_log(args):
     """
     print('Last {0} lines of {1}'.format(args.lines, conf.get('db_log')))
     print('-' * 60)
-    print(''.join(db.log(int(args.lines))))
+    print(''.join(dbc.log(int(args.lines))))
 
 
 def parse_db_init(_):
     """
     Parse awe db init
     """
-    db.init()
+    dbc.init()
 
 
 def parse_server(args):
@@ -134,7 +135,7 @@ def create_args_parser():
     sub.set_defaults(func=parse_db_log)
     sub.add_argument('lines', nargs='?', default=10, help='show last n lines')
     sub = subs2.add_parser('pid', description='database process id')
-    sub.set_defaults(func=lambda _: print(db.pid()))
+    sub.set_defaults(func=lambda _: print(dbc.pid()))
     sub = subs2.add_parser('restart', description='restart the db')
     sub.set_defaults(func=parse_db_restart)
     sub = subs2.add_parser('start', description='start the db')

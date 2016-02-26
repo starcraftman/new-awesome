@@ -8,60 +8,60 @@ import mock
 import pytest
 import rethinkdb as r
 
-import db
 import util
+import util.db_control as dbc
 
 
 class TestDB(object):
     def setup(self):
-        db.stop()
+        dbc.stop()
 
     def teardown(self):
-        db.stop()
+        dbc.stop()
 
     def test_start(self):
-        assert not db.pid()
-        db.start()
+        assert not dbc.pid()
+        dbc.start()
         try:
             r.connect()
         except r.errors.ReqlDriverError:
             assert False
-        assert util.pid_alive(db.pid())
+        assert util.pid_alive(dbc.pid())
 
-    @mock.patch('db.MAX_TIME', 2)
-    @mock.patch('db.log')
+    @mock.patch('util.db_control.MAX_TIME', 2)
+    @mock.patch('util.db_control.log')
     def test_start_timeout(self, mock_log):
-        assert not db.pid()
+        assert not dbc.pid()
         mock_log.return_value = 'fail'
-        with pytest.raises(db.DBTimeout):
-            db.start()
+        with pytest.raises(dbc.DBTimeout):
+            dbc.start()
 
     def test_stop(self):
-        assert not db.pid()
-        db.start()
-        db.stop()
+        assert not dbc.pid()
+        dbc.start()
+        dbc.stop()
         try:
             r.connect().repl()
             assert False
         except r.errors.ReqlDriverError:
             assert True
-        assert not db.pid()
+        assert not dbc.pid()
 
-    @mock.patch('db.MAX_TIME', 2)
+    @mock.patch('util.db_control.MAX_TIME', 2)
     def test_stop_raises(self):
-        assert not db.pid()
-        db.start()
-        with mock.patch('db.log') as mock_log:
+        assert not dbc.pid()
+        dbc.start()
+        with mock.patch('util.db_control.log') as mock_log:
             mock_log.return_value = 'fail'
-            with pytest.raises(db.DBTimeout):
-                db.stop()
+            with pytest.raises(dbc.DBTimeout):
+                dbc.stop()
 
     def test_restart(self):
-        assert not db.pid()
-        db.start()
-        db.restart()
+        assert not dbc.pid()
+        dbc.start()
+        dbc.restart()
         try:
             r.connect().repl()
         except r.errors.ReqlDriverError:
             assert False
-        assert util.pid_alive(db.pid())
+        assert util.pid_alive(dbc.pid())

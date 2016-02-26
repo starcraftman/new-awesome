@@ -8,9 +8,9 @@ import os
 import subprocess as sub
 
 import conf
-import db
-import db.common as dbc
+import db.common
 import util
+import util.db_control as dbc
 
 
 def alive(pid):
@@ -70,7 +70,7 @@ def env_setup():
     Setup the testing environment.
     '''
     print('\n-----INIT ENV')
-    db.stop()
+    dbc.stop()
     save_confs()
     conf.update_env('test')
     print('\n-----INIT ENV FINISHED')
@@ -92,14 +92,14 @@ class TestDB(object):
     """
     @classmethod
     def setup_class(cls):
-        db.stop()
-        db.start()
+        dbc.stop()
+        dbc.start()
 
     @classmethod
     def teardown_class(cls):
-        db.stop()
-        dbc.init_db()
+        dbc.stop()
+        db.common.init_db()
 
     def setup(self):
-        dbc.init_db()
-        dbc.init_table('plugins')
+        db.common.init_db()
+        db.common.init_table('plugins')
