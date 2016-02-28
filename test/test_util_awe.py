@@ -27,7 +27,7 @@ def test_parse_clean_all(mock_print):
         ]
         tc.touch_files(util.ROOT, paths)
         util.awe.main(['awe', 'clean', '--all'])
-        assert os.listdir(util.ROOT) == ['db', 'test', 'web']
+        assert sorted(os.listdir(util.ROOT)) == ['db', 'test', 'web']
         assert os.listdir(os.path.join(util.ROOT, 'db')) == ['__init__.py']
         assert os.listdir(os.path.join(util.ROOT, 'test')) == []
         assert os.listdir(os.path.join(util.ROOT, 'web')) == []
