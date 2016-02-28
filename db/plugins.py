@@ -2,67 +2,62 @@
 Manage the plugins table.
 
 Constraint, every ('author', 'name') tuple is unique in table.
+Primary key is 'author/name' string, a concatenation of two fields.
 
 Possible fields on plugin:
+    'id': String. Required. Form: author/name
     'author': String. Required.
     'name': String. Required.
     'desc': String. Required.
     'tags': List. Required.
 
     'is_fork': String. False if ommitted. If true, points to parent. Optional
-    'fork': There is an active fork that has replaced the original. Optional.
+    'fork': String. An active fork that has replaced the original. Optional.
     'opts': A dictionary of standard opts to make it work. Optional.
-    'project': URL of the project. Ommitted then assume github.
+    'project': String. URL of the project. Ommitted then assume github.
                https://github.com/author/repo .
-    'alts': Alternative plugins like this one, substantial overlap in function.
+    'alts': List. Alternative plugins, substantial overlap in function.
 """
 from __future__ import absolute_import, print_function
 
 import rethinkdb as r
 
-from db.common import conn
+from db.common import conn, init_table
 
 
 def init():
     """
     Create the table.
     """
-    try:
-        r.table_drop('plugins').run(conn())
-    except r.ReqlOpFailedError:
-        pass
-    r.table_create('plugins').run(conn())
-    sec_ind = [r.row['author'], r.row['name']]
-    r.table('plugins').index_create('key', sec_ind).run(conn())
-    r.table('plugins').index_wait('key').run(conn())
+    init_table('plugins')
+    r.table('plugins').index_create('author').run(conn())
+    r.table('plugins').index_wait('author').run(conn())
 
 
 def exists(plugin):
     """
     Checks if the plugin already in the database.
     """
-    matched = list(r.table('plugins').filter({
-        'author': plugin['author'],
-        'name': plugin['name']
-    }).run(conn()))
-    return len(matched) != 0
+    return r.table('plugins').get(plug_id(plugin)).run(conn()) is not None
 
 
-def insert(plugin):
+def plug_id(plugin):
     """
-    Insert into plugins table.
+    Return the id, that is the primary key of a plugin.
+    Modifies the dictionary to ensure the 'id' key is set.
+
+    Returns:
+        The id of the plugin.
+    """
+    plugin['id'] = plugin['author'] + '/' + plugin['name']
+    return plugin['id']
+
+
+def upsert(plugin):
+    """
+    Insert into plugins table. If it exists, update the entry.
     """
     if exists(plugin):
-        update(plugin)
+        r.table('plugins').get(plug_id(plugin)).update(plugin).run(conn())
     else:
         r.table('plugins').insert(plugin).run(conn())
-
-
-def update(plugin):
-    """
-    Update the entry for plugin.
-    """
-    r.table('plugins').filter({
-        'author': plugin['author'],
-        'name': plugin['name']
-    }).update(plugin).run(conn())

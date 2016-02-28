@@ -1,0 +1,14 @@
+language: python
+sudo: true
+matrix:
+  include:
+    - python: 2.7
+      env: TOXENV=flake8
+    - python: 2.7
+      env: TOXENV=pylint
+    - python: 2.7
+      env: TOXENV=pytest
+install: |
+  ./util/install.sh
+script: |
+  tox

@@ -8,7 +8,6 @@ import os
 import subprocess as sub
 
 import conf
-import db.common
 import util
 import util.db_control as dbc
 
@@ -84,22 +83,3 @@ def env_teardown():
     util.delete_it(conf.get('db_root'))
     restore_confs()
     print('\n-----DESTROY ENV FINISHED')
-
-
-class TestDB(object):
-    """
-    Base class for testing the database code.
-    """
-    @classmethod
-    def setup_class(cls):
-        dbc.stop()
-        dbc.start()
-
-    @classmethod
-    def teardown_class(cls):
-        dbc.stop()
-        db.common.init_db()
-
-    def setup(self):
-        db.common.init_db()
-        db.common.init_table('plugins')

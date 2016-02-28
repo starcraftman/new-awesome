@@ -2,6 +2,7 @@
 Common code for all database interactions.
 """
 from __future__ import absolute_import, print_function
+import json
 
 import rethinkdb as r
 
@@ -34,3 +35,13 @@ def init_table(name):
     except r.ReqlOpFailedError:
         pass
     r.table_create(name).run(conn())
+
+
+def dump_all():
+    """
+    Dump all tables contents to stdout.
+    """
+    for table in r.table_list().run(conn()):
+        print('Table: ' + table)
+        rows = list(r.table(table).run(conn()))
+        print(json.dumps(rows, sort_keys=True, indent=2))
