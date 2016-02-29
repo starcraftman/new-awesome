@@ -69,8 +69,9 @@ def env_setup():
     Setup the testing environment.
     '''
     print('\n-----INIT ENV')
-    dbc.stop()
-    save_confs()
+    if os.path.exists(os.path.join(util.ROOT, 'conf', 'db.conf')):
+        dbc.stop()
+        save_confs()
     conf.update_env('test')
     print('\n-----INIT ENV FINISHED')
 
