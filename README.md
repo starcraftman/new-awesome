@@ -1,5 +1,7 @@
 # New Awesome
 
+[![Travis][TravisShield]][TravisDash]
+
 A site similar to vim-awesome.
 The purpose is to collect, showcase and discover all the available plugins.
 
@@ -28,6 +30,11 @@ It is very much early, so it doesn't do much yet.
 - [plug-search]: My own plugin, lacking an appropriate database to be useful.
 
 <!-- Links -->
+[TravisShield]: https://travis-ci.org/starcraftman/new-awesome.svg?branch=master
+[TravisDash]: https://travis-ci.org/starcraftman/new-awesome
+[CoverallsShield]: https://coveralls.io/repos/starcraftman/new-awesome/badge.svg?branch=master&service=github
+[CoverallsDash]: https://coveralls.io/github/starcraftman/new-awesome
+
 [DESIGN.md]: https://github.com/starcraftman/new-awesome/blob/master/DESIGN.md
 [plug-search]: https://github.com/starcraftman/plug-search
 [vim-awesome]: https://github.com/divad12/vim-awesome
