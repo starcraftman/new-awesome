@@ -1,21 +1,14 @@
 language: python
 sudo: true
-matrix:
-  include:
-    - python: 2.7
-      env: TOXENV=flake8
-    - python: 2.7
-      env: TOXENV=pylint
-    - python: 2.7
-      env: TOXENV=pytest
+python: 2.7
+env:
+- TOXENV=flake8
+- TOXENV=pylint
+- TOXENV=pytest
 install: |
   echo "deb http://download.rethinkdb.com/apt $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/rethinkdb.list
   wget -qO- https://download.rethinkdb.com/apt/pubkey.gpg | sudo apt-key add -
   sudo apt-get update -y
   sudo apt-get install -y rethinkdb libyaml-dev
-
-  sudo ln -s /usr/bin/nodejs /usr/bin/node
   pip install -r requirements.txt
-  bash ./bin/awe conf test
-script: |
-  tox
+script: tox

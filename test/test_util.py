@@ -74,12 +74,6 @@ def test_pid_kill():
     assert not tc.alive(pid)
 
 
-def test_pid_kill_raises():
-    with pytest.raises(OSError):
-        assert tc.alive(1)
-        util.pid_kill(1)
-
-
 def test_pid_alive():
     pid = util.command(TRAP_SH, wait=False)
     assert util.pid_alive(pid)
