@@ -1,6 +1,7 @@
 # New Awesome
 
 [![Travis][TravisShield]][TravisDash]
+[![Coveralls][CoverallsShield]][CoverallsDash]
 
 A site similar to vim-awesome.
 The purpose is to collect, showcase and discover all the available plugins.

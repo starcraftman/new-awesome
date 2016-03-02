@@ -5,10 +5,15 @@ env:
 - TOXENV=flake8
 - TOXENV=pylint
 - TOXENV=pytest
+- TOXENV=coverage
 install: |
   echo "deb http://download.rethinkdb.com/apt $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/rethinkdb.list
   wget -qO- https://download.rethinkdb.com/apt/pubkey.gpg | sudo apt-key add -
   sudo apt-get update -y
   sudo apt-get install -y rethinkdb libyaml-dev
-  pip install -r requirements.txt
+  pip install -r requirements.txt coveralls
 script: tox
+after_success: |
+  if [ "${TOXENV}" = "coverage" ]; then
+    coveralls
+  fi
