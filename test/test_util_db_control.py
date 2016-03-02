@@ -29,10 +29,10 @@ class TestDB(object):
         assert util.pid_alive(dbc.pid())
 
     @mock.patch('util.db_control.MAX_TIME', 2)
-    @mock.patch('util.db_control.log')
-    def test_start_timeout(self, mock_log):
+    @mock.patch('db.common.conn')
+    def test_start_timeout(self, mock_conn):
         assert not dbc.pid()
-        mock_log.return_value = 'fail'
+        mock_conn.side_effect = r.errors.ReqlDriverError('')
         with pytest.raises(dbc.DBTimeout):
             dbc.start()
 

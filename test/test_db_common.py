@@ -10,17 +10,13 @@ import db.common
 import util.db_control as dbc
 
 
-# FIXME: When executing `py.test -sk test_db_common` fails...
 class TestDBCommon(object):
-    @classmethod
-    def setup_class(cls):
-        dbc.start()
-
     @classmethod
     def teardown_class(cls):
         dbc.stop()
 
     def setup(self):
+        dbc.start()
         db.common.init_db()
 
     def test_conn(self):

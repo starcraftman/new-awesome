@@ -5,6 +5,8 @@ from __future__ import absolute_import, print_function
 import os
 import time
 
+import rethinkdb as r
+
 import conf
 import util
 import db.common
@@ -58,10 +60,14 @@ def start():
     util.command('rethinkdb serve --config-file ' + conf.DB_FILE)
 
     start_time = time.time()
-    while 'Server ready' not in ''.join(log(3)):
-        time.sleep(1)
-        if (time.time() - start_time) > MAX_TIME:
-            raise DBTimeout()
+    while True:
+        try:
+            db.common.conn()
+            break
+        except r.errors.ReqlDriverError:
+            time.sleep(1)
+            if (time.time() - start_time) > MAX_TIME:
+                raise DBTimeout()
 
 
 def stop():

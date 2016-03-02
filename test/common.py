@@ -73,6 +73,7 @@ def env_setup():
         dbc.stop()
         save_confs()
     conf.update_env('test')
+    print('Using db_root:', conf.get('db_root'))
     print('\n-----INIT ENV FINISHED')
 
 
@@ -81,6 +82,5 @@ def env_teardown():
     Teardown the testing environment.
     '''
     print('\n-----DESTROY ENV')
-    util.delete_it(conf.get('db_root'))
     restore_confs()
     print('\n-----DESTROY ENV FINISHED')
