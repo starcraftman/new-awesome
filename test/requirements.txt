@@ -1,0 +1,9 @@
+# Testing dependencies only
+coverage
+coveralls
+flake8
+mock
+pylint
+pytest
+pytest-cov
+tox

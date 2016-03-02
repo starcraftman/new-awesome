@@ -30,7 +30,7 @@ EOF
 $user = <<EOF
 curl -s https://bootstrap.pypa.io/get-pip.py > /tmp/get-pip.py
 python /tmp/get-pip.py --user
-~/.local/bin/pip install --user -r /vagrant/requirements.txt
+~/.local/bin/pip install --user -r /vagrant/requirements.txt -r /vagrant/test/requirements.txt
 
 cat > ~/.lbashrc <<LINES
 # Will be sourced in addition to bashrc each login

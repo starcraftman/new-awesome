@@ -1,19 +1,9 @@
-# Main application
+# Main application dependencies
 flask
 flask-cache
 pyyaml
 requests
 rethinkdb
-
-# Testing
-coverage
-flake8
-ipython
-mock
-pylint
-pytest
-pytest-cov
-tox
 
 # Unused
 # configparser
