@@ -6,20 +6,11 @@ from __future__ import absolute_import
 
 import rethinkdb as r
 
-from db.common import conn
+from db.common import connect
 import db.plugins
-import util.db_control as dbc
 
 
 class TestDBPlugins(object):
-    @classmethod
-    def setup_class(cls):
-        dbc.start()
-
-    @classmethod
-    def teardown_class(cls):
-        dbc.stop()
-
     def setup(self):
         self.plugin_a = {
             'author': 'junegunn',
@@ -41,6 +32,10 @@ class TestDBPlugins(object):
         db.common.init_db()
         db.plugins.init()
 
+    @classmethod
+    def teardown_class(cls):
+        db.common.init_db()
+
     def test_plug_id(self):
         expect = self.plugin_a['id']
         del self.plugin_a['id']
@@ -49,10 +44,12 @@ class TestDBPlugins(object):
         assert self.plugin_a.get('id', None) is not None
 
     def test_init(self):
-        assert 'plugins' in list(r.table_list().run(conn()))
+        with connect() as con:
+            assert 'plugins' in list(r.table_list().run(con))
 
     def test_exists(self):
-        r.table('plugins').insert(self.plugin_a).run(conn())
+        with connect() as con:
+            r.table('plugins').insert(self.plugin_a).run(con)
         assert db.plugins.exists(self.plugin_a)
         assert not db.plugins.exists(self.plugin_b)
 
@@ -60,12 +57,13 @@ class TestDBPlugins(object):
         db.plugins.upsert(self.plugin_a)
         db.plugins.upsert(self.plugin_a)
         db.plugins.upsert(self.plugin_a)
-        plugs = list(r.table('plugins').run(conn()))
-        assert len(plugs) == 1
-        assert plugs[0]['desc'] == self.plugin_a['desc']
+        with connect() as con:
+            plugs = list(r.table('plugins').run(con))
+            assert len(plugs) == 1
+            assert plugs[0]['desc'] == self.plugin_a['desc']
 
-        self.plugin_a['desc'] = 'new line'
-        db.plugins.upsert(self.plugin_a)
-        plugs = list(r.table('plugins').run(conn()))
-        assert len(plugs) == 1
-        assert plugs[0]['desc'] == 'new line'
+            self.plugin_a['desc'] = 'new line'
+            db.plugins.upsert(self.plugin_a)
+            plugs = list(r.table('plugins').run(con))
+            assert len(plugs) == 1
+            assert plugs[0]['desc'] == 'new line'

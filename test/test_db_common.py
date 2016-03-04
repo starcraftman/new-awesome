@@ -7,24 +7,22 @@ from __future__ import absolute_import, print_function
 import rethinkdb as r
 
 import db.common
-import util.db_control as dbc
 
 
-class TestDBCommon(object):
-    @classmethod
-    def teardown_class(cls):
-        dbc.stop()
+def teardown_function(_):
+    db.common.init_db()
 
-    def setup(self):
-        dbc.start()
-        db.common.init_db()
 
-    def test_conn(self):
-        assert db.common.conn() is not None
+def test_conn():
+    assert db.common.connect() is not None
 
-    def test_init_db(self):
-        assert 'awe' in list(r.db_list().run(db.common.conn()))
 
-    def test_init_table(self):
-        db.common.init_table('plugins')
-        assert 'plugins' in list(r.table_list().run(db.common.conn()))
+def test_init_db():
+    with db.common.connect() as con:
+        assert 'awe' in list(r.db_list().run(con))
+
+
+def test_init_table():
+    db.common.init_table('plugins')
+    with db.common.connect() as con:
+        assert 'plugins' in list(r.table_list().run(con))

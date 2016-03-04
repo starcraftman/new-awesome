@@ -33,17 +33,23 @@ def pid():
     return db_pid
 
 
+def alive():
+    """
+    The database is alive.
+    """
+    return pid() and util.pid_alive(pid())
+
+
 def status():
     """
     Simply print the status of the database.
     """
-    db_pid = pid()
-    if db_pid and util.pid_alive(db_pid):
-        print('PID:', str(db_pid), 'Root:', conf.get('db_root'))
+    if alive():
+        print('PID:', str(pid()), 'Root:', conf.get('db_root'))
         print('-' * 60)
         print(''.join(log(5)))
-    elif db_pid:
-        print('database may have crashed, pid file remains. Call: db stop')
+    elif os.path.exists(conf.get('db_pid')):
+        print('database improperly shut down')
     else:
         print('database not running')
 
@@ -62,7 +68,7 @@ def start():
     start_time = time.time()
     while True:
         try:
-            db.common.conn()
+            db.common.connect()
             break
         except r.errors.ReqlDriverError:
             time.sleep(1)

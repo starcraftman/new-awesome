@@ -22,7 +22,7 @@ from __future__ import absolute_import, print_function
 
 import rethinkdb as r
 
-from db.common import conn, init_table
+from db.common import connect, init_table
 
 
 def init():
@@ -30,15 +30,17 @@ def init():
     Create the table.
     """
     init_table('plugins')
-    r.table('plugins').index_create('author').run(conn())
-    r.table('plugins').index_wait('author').run(conn())
+    with connect() as con:
+        r.table('plugins').index_create('author').run(con)
+        r.table('plugins').index_wait('author').run(con)
 
 
 def exists(plugin):
     """
     Checks if the plugin already in the database.
     """
-    return r.table('plugins').get(plug_id(plugin)).run(conn()) is not None
+    with connect() as con:
+        return r.table('plugins').get(plug_id(plugin)).run(con) is not None
 
 
 def plug_id(plugin):
@@ -57,7 +59,8 @@ def upsert(plugin):
     """
     Insert into plugins table. If it exists, update the entry.
     """
-    if exists(plugin):
-        r.table('plugins').get(plug_id(plugin)).update(plugin).run(conn())
-    else:
-        r.table('plugins').insert(plugin).run(conn())
+    with connect() as con:
+        if exists(plugin):
+            r.table('plugins').replace(plugin).run(con)
+        else:
+            r.table('plugins').insert(plugin).run(con)

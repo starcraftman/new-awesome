@@ -11,6 +11,8 @@ import conf
 import util
 import util.db_control as dbc
 
+DB_START = os.path.join(util.ROOT, 'conf', '.db_start')
+
 
 def alive(pid):
     """
@@ -69,10 +71,15 @@ def env_setup():
     Setup the testing environment.
     '''
     print('\n-----INIT ENV')
-    if os.path.exists(os.path.join(util.ROOT, 'conf', 'db.conf')):
-        dbc.stop()
+    if os.path.exists(conf.DB_FILE):
+        if dbc.alive():
+            dbc.stop()
+            with open(DB_START, 'w') as fout:
+                fout.write('')
         save_confs()
+
     conf.update_env('test')
+    dbc.start()
     print('Using db_root:', conf.get('db_root'))
     print('\n-----INIT ENV FINISHED')
 
@@ -82,5 +89,10 @@ def env_teardown():
     Teardown the testing environment.
     '''
     print('\n-----DESTROY ENV')
+    dbc.stop()
+
     restore_confs()
+    if os.path.exists(DB_START):
+        util.delete_it(DB_START)
+        dbc.start()
     print('\n-----DESTROY ENV FINISHED')

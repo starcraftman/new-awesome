@@ -1,53 +1,34 @@
 """
 Manage the tags table.
 
-Constraint, every tag is unique.
-
-
+Every tag is unique.
+Every tag can apply to as many plugins as on site.
 """
 from __future__ import absolute_import, print_function
 
 import rethinkdb as r
 
-from db.common import conn
+import db.common
 
 
 def init():
     """
     Create the table.
     """
-    try:
-        r.table_drop('tags').run(conn())
-    except r.ReqlOpFailedError:
-        pass
-    r.table_create('tags').run(conn())
-    r.table('plugins').index_create('tag').run(conn())
-    r.table('plugins').index_wait('tag').run(conn())
+    db.common.init_table('tags', primary_key='tag')
 
 
-def exists(tag):
+def add_tag(plugin_id, tag):
     """
-    Checks if the plugin already in the database.
+    Add all tags to relevant lists.
     """
-    matched = list(r.table('tag').filter({'tag': tag}).run(conn()))
-    return len(matched) != 0
-
-
-def insert(plugin):
-    """
-    Insert into plugins table.
-    """
-    if exists(plugin):
-        update(plugin)
-    else:
-        r.table('plugins').insert(plugin).run(conn())
-
-
-def update(plugin):
-    """
-    Update the entry for plugin.
-    """
-    r.table('plugins').filter({
-        'author': plugin['author'],
-        'name': plugin['name']
-    }).update(plugin).run(conn())
+    with db.common.connect() as con:
+        if r.table('tags').get(tag).run(con) is None:
+            r.table('tags').insert({
+                'tag': tag,
+                'plugins': [plugin_id]
+            }).run(con)
+        else:
+            r.table('tags').get(tag).update(
+                {'plugins': r.row['plugins'] + [plugin_id]}
+            ).run(con)
