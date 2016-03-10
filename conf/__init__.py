@@ -8,7 +8,7 @@ import tempfile
 
 import util
 
-GCONF_FILE = os.path.join(util.ROOT, 'conf', 'gconf.json')
+GCONF_FILE = os.path.join(util.ROOT, 'conf', 'global.conf')
 DB_FILE = os.path.join(util.ROOT, 'conf', 'db.conf')
 DB_CONF = """
 directory={db_root}

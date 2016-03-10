@@ -46,5 +46,6 @@ def dump_all():
     with connect() as con:
         for table in r.table_list().run(con):
             print('Table: ' + table)
+            print('#' * 50)
             rows = list(r.table(table).run(con))
             print(json.dumps(rows, sort_keys=True, indent=2))

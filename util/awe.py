@@ -27,7 +27,7 @@ def parse_clean(args):
         util.delete_it(fname)
 
     if args.all:
-        for fname in ['.tox', '.venv', 'db/rethink']:
+        for fname in ['.tox', '.venv', 'db/rethink', 'node_modules']:
             path = os.path.join(util.ROOT, fname)
             print('Deleting:', path)
             util.delete_it(path)

@@ -19,7 +19,8 @@ python /tmp/get-pip.py --user
 
 cat >> ~/.bashrc <<LINES
 # Will be sourced in addition to bashrc each login
-export PATH=~/.local/bin:/vagrant/bin:\$PATH
+export PATH=~/.local/bin:/vagrant/bin:/vagrant/node_modules/.bin:\$PATH
+export PYTHONPATH=/vagrant
 alias pipi='pip install --user'
 cd /vagrant
 LINES

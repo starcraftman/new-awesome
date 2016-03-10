@@ -53,7 +53,6 @@ def save_confs():
     Prevent clobbering existing config during tests.
     """
     fnames = glob.glob(os.path.join(util.ROOT, 'conf', '*.conf'))
-    fnames += glob.glob(os.path.join(util.ROOT, 'conf', '*.json'))
     for fname in fnames:
         os.rename(fname, fname + '_bak')
 

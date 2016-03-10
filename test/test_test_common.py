@@ -33,8 +33,7 @@ def test_touch_files():
 def test_save_confs():
     try:
         paths = test.common.touch_files(util.ROOT,
-                                        ['conf/db.conf', 'conf/flask.conf',
-                                         'conf/gconf.json'])
+                                        ['conf/db.conf', 'conf/gconf.conf'])
         for path in paths:
             assert os.path.exists(path)
 
@@ -50,8 +49,7 @@ def test_save_confs():
 def test_restore_confs():
     try:
         paths = test.common.touch_files(util.ROOT,
-                                        ['conf/db.conf', 'conf/flask.conf',
-                                         'conf/gconf.json'])
+                                        ['conf/db.conf', 'conf/gconf.conf'])
         for path in paths:
             assert os.path.exists(path)
 

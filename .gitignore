@@ -4,8 +4,8 @@
 .vagrant
 .venv
 conf/*.conf
-conf/*.json
 db/rethink
+node_modules
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
